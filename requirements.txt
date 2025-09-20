@@ -1,0 +1,11 @@
+pandas
+feedparser
+tweepy
+Pillow
+openpyxl
+python-dotenv
+json5
+requests
+beautifulsoup4
+httpx
+python-resize-image
