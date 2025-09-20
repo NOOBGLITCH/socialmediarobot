@@ -1,5 +1,5 @@
 
-# Tech/AI News Automation Bot (Twitter/X)
+# Tech/AI News Automation Bot
 
 
 ## 🚀 Problem
