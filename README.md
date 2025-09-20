@@ -1,148 +1,144 @@
-# Tech/AI News Automation (Twitter/X)
 
-This repository automates the posting of tech and AI news to **Twitter/X** using RSS feeds from an Excel file (`rss.xlsx`). The workflow runs daily at **7 PM IST**, fetching news from the current day (12 AM to 7 PM IST), generating catchy headlines and summaries with the **Gemini API**, and posting 11 threads (1 index with top 10 headlines + 10 news threads).
+# Tech/AI News Automation Bot (Twitter/X)
 
-The pipeline is powered by **GitHub Actions**, ensuring reliable automation.
 
-## Features
+## 🚀 Problem
+- News spreads fast; teams struggle to **curate, summarize, format, and publish** across platforms.
+- Manual posting is **slow, inconsistent, and resource-heavy**.
+- Small teams or creators **can’t scale content efficiently**.
 
-  - **RSS Scraping**: Fetches news from RSS feeds listed in `rss.xlsx`.
-  - **Content Generation**: Uses Gemini API for SEO-friendly headlines and summaries.
-  - **Social Media Posting**:
-      - Twitter/X: 11 threads (\~30 tweets, under 50/day limit).
-  - **Scheduling**: Runs daily at 7 PM IST (13:30 UTC) via GitHub Actions.
-  - **Error Handling**: Logs errors and handles rate limits (e.g., 429 errors).
+---
 
-## File Structure
+## 💡 Solution
+An **AI-powered automation pipeline** that:
+1. Scrapes **RSS feeds** for top tech/AI news.
+2. Generates **summaries & headlines** via **Gemini API**.
+3. Auto-posts to **Twitter/X as threads** (1 index + 10 detailed).
+4. Fully automated via **GitHub Actions** — **no human intervention**.
+5. Supports **custom fonts, branding, and optimized summary length**.
 
+---
+
+## ⚙️ Features
+- **Daily automation** at **7 PM IST**.
+- **Error handling** and **rate-limit management**.
+- **Adaptive content formatting** for high readability and engagement.
+- **Modular, scalable architecture** for future platforms.
+
+---
+
+## 📁 Core Structure
 ```
 tech-ai-news-automation/
-├── .github/
-│   └── workflows/
-│       └── pipeline.yml            # GitHub Actions pipeline
-├── src/
-│   ├── rss_scraper.py              # RSS feed scraping and filtering
-│   ├── twitter.py                  # Twitter/X thread posting
-│   ├── gemini_api.py               # Gemini API for content generation
-│   └── utils.py                    # Shared utilities (e.g., date handling)
-├── data/
-│   └── rss.xlsx                    # RSS feed sources (Names, RSS Links)
-├── requirements.txt                # Python dependencies
-└── README.md                       # This file
+├─ .github/workflows/pipeline.yml   # GitHub Actions pipeline
+├─ src/
+│   ├─ rss_scraper.py               # News scraping & filtering
+│   ├─ gemini_api.py                # AI content generation
+│   └─ twitter.py                   # Auto-posting threads
+├─ data/rss.xlsx                     # Feed sources
+└─ requirements.txt                  # Dependencies
 ```
 
-## Prerequisites
+---
 
-  - **GitHub Account**: For hosting the repository and running Actions.
-  - **Python 3.11+**: For local testing.
-  - **API Keys**:
-      - Gemini API (Google AI Studio).
-      - Twitter/X OAuth1 (Developer Portal, Free tier).
-  - **rss.xlsx**: Excel file with columns “Names” and “RSS Links” (e.g., TechCrunch: `https://techcrunch.com/feed/`).
+## 🛠️ Setup (Private Use Only)
+**Private Fork Only** – **do NOT publish public repos**.
 
-## Setup
+### Requirements
+- **GitHub Account**: For hosting the repository and running Actions.
+- **Python 3.11+**: For local testing.
+- **API Keys**:
+  - **Gemini API** (Google AI Studio).
+  - **Twitter/X OAuth1** (Developer Portal, Free tier).
+- **rss.xlsx**: Excel file with columns **"Names"** and **"RSS Links"** (e.g., TechCrunch: `https://techcrunch.com/feed/`).
 
-1.  **Clone the Repository**:
+---
 
-    ```bash
-    git clone https://NOOBGLITCH/socialmediabot
-    cd socialmediabot
-    ```
+### Steps
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/NOOBGLITCH/socialmediabot
+   cd socialmediabot
+   ```
 
-2.  **Install Dependencies**:
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. **Configure `rss.xlsx`**:
+   Add RSS feeds to `data/rss.xlsx`:
+   ```
+   Names        | RSS Links
+   TechCrunch   | https://techcrunch.com/feed/
+   Ars Technica | https://arstechnica.com/feed/
+   ```
 
-3.  **Configure rss.xlsx**:
+4. **Test Locally**:
+   - Set environment variables:
+     ```bash
+     export GEMINI_API_KEY="your-key"
+     # Add other Twitter/X secrets
+     ```
+   - Run scripts:
+     ```bash
+     python src/rss_scraper.py
+     python src/twitter.py
+     ```
+   - Check your **Twitter/X posts**.
 
-      - Add RSS feeds to `data/rss.xlsx`:
+---
 
-        ```excel
-        Names        | RSS Links
-        TechCrunch   | https://techcrunch.com/feed/
-        Ars Technica | https://arstechnica.com/feed/
-        ```
+## 📈 Future Roadmap
+- **Full Automation & Zero Human Interaction**:
+  Pipeline runs **completely hands-free** with GitHub Actions.
+- **Custom Fonts & Branding**:
+  Consistent visual style and identity across all posts.
+- **Summary Length & Optimization**:
+  Adaptive AI-generated summaries tailored for engagement and readability.
 
-4.  **Set Up GitHub Actions Secrets**:
+---
 
-      - Go to **Settings \> Secrets and variables \> Actions \> New repository secret**.
-      - Add:
-          - `GEMINI_API_KEY`: Gemini API key.
-          - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN`, `TWITTER_ACCESS_TOKEN_SECRET`: Twitter/X credentials.
+## 🎯 Impact
+- Teams **save hours daily**, focusing on high-value work.
+- Content is **always timely, branded, and engaging**.
+- Demonstrates **Agentic AI** in real-world publishing workflows.
 
-5.  **Test Locally**:
+---
 
-      - Set environment variables:
+### ⚠️ Strict Warning
+- **Private use only** – **do not fork publicly**.
+- **API keys must never be committed to GitHub**.
+- **Misuse may lead to API bans**.
+- **Social Media Spamming Restrictions**:
+  - Do **not** use this bot for spamming, unsolicited promotions, or violating Twitter/X’s [Automation Rules](https://help.twitter.com/en/rules-and-policies/twitter-automation).
+  - Ensure all posted content complies with platform guidelines.
+  - **Restrict accounts** to authorized users only. Unauthorized or automated abuse may result in **account suspension or legal action**.
 
-        ```bash
-        export GEMINI_API_KEY="your-key"
-        # Add other Twitter/X secrets
-        ```
 
-      - Run scripts:
+---
 
-        ```bash
-        python src/rss_scraper.py
-        python src/twitter.py
-        ```
+## 🤝 Contributing
+1. Fork the repository.
+2. Create a feature branch:
+   ```bash
+   git checkout -b feature/new-feature
+   ```
+3. Commit changes:
+   ```bash
+   git commit -m "Add new feature"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/new-feature
+   ```
+5. Open a **Pull Request**.
+6. **Feel free to contribute!** Your ideas and improvements are welcome.
 
-      - Check your Twitter/X posts.
+---
 
-6.  **Deploy Pipeline**:
-
-      - Push changes:
-
-        ```bash
-        git add .
-        git commit -m "Initial setup"
-        git push origin main
-        ```
-
-      - The pipeline runs daily at 7 PM IST (13:30 UTC).
-
-      - Trigger manually: **Actions \> Tech AI News Automation \> Run workflow**.
-
-## Usage
-
-  - **Daily Automation**: The pipeline fetches RSS feeds, generates content, and posts to Twitter/X at 7 PM IST.
-  - **Output**:
-      - **Twitter/X**: 1 index thread (top 10 headlines) + 10 news threads.
-  - **Monitoring**: Check Actions logs for errors (e.g., rate limits, API issues).
-  - **Rate Limits**:
-      - Twitter/X: \~30 tweets (under 50/day).
-
-## Example Output
-
-For May 22, 2025:
-
-  - **Twitter/X**:
-      - Index: “Top 10 Tech/AI Headlines - May 22, 2025: 1. AI Startup Raises $100M … \#Tech \#AI”
-      - Thread 1: “AI Startup Raises $100M 🚀 $100M to scale robotics. \#AI \#Tech”
-
-## Troubleshooting
-
-  - **API Errors**: Verify API keys and rate limits in Actions logs.
-  - **Pipeline Failures**: Check logs for missing secrets or RSS feed errors.
-  - **Bans**: Avoid spammy posts; appeal via X Developer Portal if flagged.
-
-## Contributing
-
-1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/new-feature`).
-3.  Commit changes (`git commit -m "Add new feature"`).
-4.  Push to the branch (`git push origin feature/new-feature`).
-5.  Open a Pull Request.
-
-## License
-
-MIT License. See LICENSE for details.
-
-## Contact
-
-For issues or suggestions, open an issue or contact NOOBGLITCH.
-
------
-
-Would you like any further modifications or have more questions about setting this up?
+### 📧 Contact
+For **issues, suggestions, or feedback**, please:
+- Open an **issue** in the repository.
+- Contact **NOOBGLITCH** directly.
+---
