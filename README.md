@@ -1,6 +1,16 @@
 
 # Tech/AI News Automation Bot
 
+<p align="center">
+  <img width="800" height="400" src="https://github.com/user-attachments/assets/f477be77-d023-425e-9cab-23b1aef642eb" alt="image" />
+</p>
+
+
+<h2 align="center">
+  🔗 <a href="https://deepwiki.com/NOOBGLITCH/socialmediarobot/1-overview">View the DeepWiki Overview</a>
+</h2>
+
+# Project Overview
 
 ## 🚀 Problem
 - News spreads fast; teams struggle to **curate, summarize, format, and publish** across platforms.
