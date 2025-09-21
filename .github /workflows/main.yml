@@ -1,0 +1,101 @@
+name: '✨ Tech AI News Automation ✨'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Define environment variables using GitHub Secrets for the entire job
+    # These will be available as environment variables in all steps
+    env: # Using job-level 'env' for clarity if not using GitHub Environments features
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
+      TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
+      TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+      TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+      # GITHUB_PERSONAL_TOKEN: ${{ secrets.GITHUB_PERSONAL_TOKEN }} # Only if GITHUB_TOKEN is insufficient
+
+    steps:
+      - name: '📥 Checkout Code'
+        uses: actions/checkout@v4
+        with:
+          # For this workflow, since you are committing and pushing, 0 is safer but try 1 if you don't need history.
+          fetch-depth: 0
+
+      - name: '🐍 Set up Python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # Enable caching for pip dependencies
+
+      # The step to load from .env is correctly REMOVED
+
+      - name: '📦 Install Dependencies'
+        run: |
+          python -m pip install --upgrade pip
+          # --no-cache-dir is recommended when using GitHub Actions caching for pip
+          # to avoid pip using its own local cache, which can sometimes conflict or be redundant.
+          pip install --no-cache-dir -r requirements.txt
+        # The 'cache: pip' in setup-python handles the caching mechanism.
+        # It uses hashFiles('**/requirements.txt') internally for the cache key.
+
+      - name: '🕵️ Verify Credentials Loaded (from Secrets)'
+        # This step now relies on the job-level 'env' block for secrets
+        run: |
+          echo "--- Verifying Loaded Credentials (from GitHub Secrets) ---"
+          [[ -n "$GEMINI_API_KEY" ]] && echo "✅ Gemini API Key: Loaded" || echo "❌ Gemini API Key: NOT FOUND in Secrets"
+          [[ -n "$TWITTER_CONSUMER_KEY" ]] && echo "✅ Twitter Consumer Key: Loaded" || echo "❌ Twitter Consumer Key: NOT FOUND in Secrets"
+          [[ -n "$TWITTER_CONSUMER_SECRET" ]] && echo "✅ Twitter Consumer Secret: Loaded" || echo "❌ Twitter Consumer Secret: NOT FOUND in Secrets"
+          [[ -n "$TWITTER_ACCESS_TOKEN" ]] && echo "✅ Twitter Access Token: Loaded" || echo "❌ Twitter Access Token: NOT FOUND in Secrets"
+          [[ -n "$TWITTER_ACCESS_TOKEN_SECRET" ]] && echo "✅ Twitter Access Token Secret: Loaded" || echo "❌ Twitter Access Token Secret: NOT FOUND in Secrets"
+          # [[ -n "$GITHUB_PERSONAL_TOKEN" ]] && echo "✅ GitHub PAT: Loaded (if used)" || echo "⚠️ GitHub PAT: Not explicitly loaded (using GITHUB_TOKEN?)"
+          echo "------------------------------------"
+
+      - name: '📰 Run RSS Scraper'
+        run: python rss_scraper.py
+        # Your Python script should use os.environ.get('GEMINI_API_KEY') etc.
+
+     # - name: '🐦 Post to Twitter'
+     #  run: python twitter.py
+        # Your Python script should use os.environ.get('TWITTER_CONSUMER_KEY') etc.
+
+      - name: '🖼️ Generate Instagram Images'
+        run: python instagram.py # Assuming this might also need GEMINI_API_KEY or other env vars
+
+      - name: '🔧 Setup Git Configuration'
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          # Use the built-in GITHUB_TOKEN. It has write permissions to the repo.
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          # If GITHUB_TOKEN lacks specific permissions for your use case (e.g., pushing to protected branches without specific config),
+          # then you might fall back to a GITHUB_PERSONAL_TOKEN with appropriate scopes.
+          # git remote set-url origin https://x-access-token:${{ secrets.GITHUB_PERSONAL_TOKEN }}@github.com/${{ github.repository }}
+
+      - name: '🚀 Commit & Push Images'
+        run: |
+          # Ensure you are on the correct branch or create it if it doesn't exist
+          # This example assumes you want to push to a branch named 'instagram-images'
+          TARGET_BRANCH="instagram-images"
+          git checkout $TARGET_BRANCH || git checkout -b $TARGET_BRANCH
+
+          # Add generated files (be specific if possible, e.g., git add output/*.jpg)
+          git add . # Or be more specific: git add images_folder/ data_folder/
+
+          if git diff --staged --quiet; then
+            echo "✅ No new images or data to commit to $TARGET_BRANCH."
+          else
+            echo "📦 Committing new images and data to $TARGET_BRANCH..."
+            git commit -m "Add Instagram images and data for $(date +'%b %d, %Y at %H:%M UTC')"
+            git push origin $TARGET_BRANCH
+            echo "✅ Push to $TARGET_BRANCH successful!"
+          fi
+
+      - name: '🏠 Return to Main Branch (Optional)'
+        if: always() # Ensure this runs even if previous steps fail, to leave repo in clean state
+        run: |
+          # Determine the default branch name
+          DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+          echo "Returning to default branch: $DEFAULT_BRANCH"
+          git checkout $DEFAULT_BRANCH
